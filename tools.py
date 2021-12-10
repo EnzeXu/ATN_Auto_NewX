@@ -292,7 +292,7 @@ def get_k_means_result(main_path):
 
 
 def get_start_index(main_path):
-    df = pd.read_csv(main_path + "record/record.csv", engine=get_engine())
+    df = pd.read_csv(main_path + "record/record.csv")
     start_index = sorted(list(df["Id"]), key=lambda x: x)[-1] + 1
     return start_index
 

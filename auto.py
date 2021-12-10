@@ -367,6 +367,7 @@ if __name__ == "__main__":
     }
     initial_record()
     start_index = get_start_index(main_path)
+    print(json.dumps(params, indent=4, ensure_ascii=False))
     for i in range(times):
         j, p, ds = train(main_path, start_index + i, params)
         save_record(main_path, start_index + i, ds, j, p, comments, params)
