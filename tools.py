@@ -8,6 +8,8 @@ import math
 import time
 import matplotlib.pyplot as plt
 import os
+import platform
+from shutil import copyfile
 
 
 def f_get_minibatch(mb_size, x, y):
@@ -38,7 +40,7 @@ def purity_score(y_true, y_pred):
 
 
 def build_labels(main_path, patientData4Visits):
-    clinical_score = pd.read_excel(main_path + 'data/MRI_information_All_Measurement.xlsx', engine="openpyxl")
+    clinical_score = pd.read_excel(main_path + 'data/MRI_information_All_Measurement.xlsx', engine=get_engine())
     scores = clinical_score.iloc[:, 26:49]  # 21:26
     scores = pd.DataFrame(scores)
     from sklearn.preprocessing import MinMaxScaler
@@ -197,6 +199,14 @@ def draw_heat_map_2(data1, data2, s=2):
     plt.show()
 
 
+def get_engine():
+    if platform.system().lower() == "linux":
+        return "openpyxl"
+    elif platform.system().lower() == "windows":
+        return None
+    return None
+
+
 def get_heat_map_data(K, patient_data, label, data_path):
     dim_0 = len(patient_data)
     dim_1 = len(patient_data[0])
@@ -205,7 +215,7 @@ def get_heat_map_data(K, patient_data, label, data_path):
     for i in range(dim_0):
         for j in range(dim_1):
             patient_data_match.append([patient_data[i][j][3], patient_data[i][j][2]])
-    data = pd.read_excel(data_path, engine="openpyxl") # main_path + 'DPS_ATN/MRI_information_All_Measurement.xlsx'
+    data = pd.read_excel(data_path, engine=get_engine())  # main_path + 'DPS_ATN/MRI_information_All_Measurement.xlsx'
     target_labels = ["MMSE", "CDRSB", "ADAS13"]
     data = data[["PTID", "EXAMDATE"] + target_labels]
     # data["EXAMDATE"] = data["EXAMDATE"].astype(str)
@@ -281,9 +291,9 @@ def get_k_means_result(main_path):
     return res1
 
 
-def get_start_index(main_path, default_start_index):
-    df = pd.read_csv(main_path + "record/record.csv")
-    start_index = sorted(list(df["Id"]), key=lambda x: x)[-1] + 1 if len(df) > 0 else default_start_index
+def get_start_index(main_path):
+    df = pd.read_csv(main_path + "record/record.csv", engine=get_engine())
+    start_index = sorted(list(df["Id"]), key=lambda x: x)[-1] + 1
     return start_index
 
 
@@ -295,7 +305,7 @@ def get_ac_tpc_result(main_path, index):
 
 
 def get_cn_ad_labels(main_path, pt_id_list):
-    clinical_score = pd.read_excel(main_path + 'data/MRI_information_All_Measurement.xlsx', engine="openpyxl")
+    clinical_score = pd.read_excel(main_path + 'data/MRI_information_All_Measurement.xlsx', engine=get_engine())
     cn_ad_labels = []
     dic = dict()
     for i in range(320):  # [148*148，[label tuple]，VISCODE，patientID]
@@ -332,6 +342,11 @@ def create_label_string(cluster_labels, const_cn_ad_labels):
     # for dic in dic_list:
     #     print(dic)
     return ["{}+{}+{}".format(dic.get("CN"), dic.get("AD"), dic.get("Other")) for dic in dic_list]
+
+
+def initial_record():
+    if not os.path.exists("record/record.csv"):
+        copyfile("record/record_0.csv", "record/record.csv")
 
 
 if __name__ == "__main__":

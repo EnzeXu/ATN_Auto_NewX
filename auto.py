@@ -45,7 +45,7 @@ def train(main_path, data_name, parameters, print_flag=True):
     # data_x = get_data_x(enze_patient_data)
     if print_flag:
         print("[{:0>4d}][Step 1] Loading data".format(data_name))
-    data_x = load_data(main_path, "/data/atn_data_x_n.npy")
+    data_x = load_data(main_path, "/data/data_x_new.npy")
     data_y = load_data(main_path, "/data/atn_data_y.npy")
     seed = 1234
     tr_data_x, te_data_x, tr_data_y, te_data_y = train_test_split(
@@ -336,10 +336,7 @@ if __name__ == "__main__":
         comments = platform.platform() + ": " + sys.argv[2]
     else:
         comments = platform.platform()
-    if len(sys.argv) > 3:
-        default_start_index = int(sys.argv[3])
-    else:
-        default_start_index = 1
+
     params = {
         # [Step 2] Define network parameters
         'K': 5,                     # 5
@@ -368,7 +365,8 @@ if __name__ == "__main__":
         'iteration_s7': 1000,       # 5000
         'check_step_s7': 100        # 100
     }
-    start_index = get_start_index(main_path, default_start_index)
+    initial_record()
+    start_index = get_start_index(main_path)
     for i in range(times):
         j, p, ds = train(main_path, start_index + i, params)
         save_record(main_path, start_index + i, ds, j, p, comments, params)
