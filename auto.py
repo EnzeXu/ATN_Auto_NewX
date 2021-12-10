@@ -326,18 +326,7 @@ def train(main_path, data_name, parameters, print_flag=True):
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-
-    main_path = os.path.dirname(os.path.abspath("__file__")) + "/"  # "E:/Workspace_WFU/ATN/Auto/"
-    if len(sys.argv) > 1:
-        times = int(sys.argv[1])
-    else:
-        times = 1000
-    if len(sys.argv) > 2:
-        comments = platform.platform() + ": " + sys.argv[2]
-    else:
-        comments = platform.platform()
-
-    params = {
+        params = {
         # [Step 2] Define network parameters
         'K': 5,                     # 5
         'h_dim_FC': 8,              # 26
@@ -365,9 +354,22 @@ if __name__ == "__main__":
         'iteration_s7': 1000,       # 5000
         'check_step_s7': 100        # 100
     }
+    print(json.dumps(params, indent=4, ensure_ascii=False))
+
+    main_path = os.path.dirname(os.path.abspath("__file__")) + "/"  # "E:/Workspace_WFU/ATN/Auto/"
+    if len(sys.argv) > 1:
+        times = int(sys.argv[1])
+    else:
+        times = 1000
+    if len(sys.argv) > 2:
+        comments = platform.platform() + ": " + sys.argv[2]
+    else:
+        comments = platform.platform()
+
+
     initial_record()
     start_index = get_start_index(main_path)
-    print(json.dumps(params, indent=4, ensure_ascii=False))
+    
     for i in range(times):
         j, p, ds = train(main_path, start_index + i, params)
         save_record(main_path, start_index + i, ds, j, p, comments, params)
