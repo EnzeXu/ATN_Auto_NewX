@@ -326,7 +326,7 @@ def train(main_path, data_name, parameters, print_flag=True):
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-        params = {
+    params = {
         # [Step 2] Define network parameters
         'K': 5,                     # 5
         'h_dim_FC': 8,              # 26
